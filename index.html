@@ -4,10 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <title>悉尼 × 墨尔本｜2026.12.26–2027.01.03</title>
-<link rel="preconnect" href="https://unpkg.com">
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <style>
-:root{--navy:#17324d;--gold:#b8891d;--bg:#eef3f7;--card:#fff;--muted:#687386;--line:#e5e9ef}
+:root{--navy:#17324d;--gold:#b8891d;--bg:#eef3f7;--card:#fff;--muted:#687386;--line:#e5e9ef;--paper:#f8f3e8;--water:#cfe8ef;--route:#c94f45}
 *{box-sizing:border-box}html,body{margin:0;height:100%;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;color:#172033;background:var(--bg)}
 body{overflow:hidden}.app{height:100%;display:flex;flex-direction:column}.top{height:58px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 16px;flex:0 0 auto}
 .brand{font-weight:800;color:var(--navy)}.count{font-size:13px;color:var(--muted)}
@@ -18,13 +16,12 @@ body{overflow:hidden}.app{height:100%;display:flex;flex-direction:column}.top{he
 .date{font-size:13px;color:var(--gold);font-weight:800}.title{font-size:27px;font-weight:850;color:var(--navy);margin:5px 0}.sub{font-size:14px;color:var(--muted)}
 .card{padding:8px 16px;margin-bottom:12px}.row{display:grid;grid-template-columns:92px 1fr;gap:12px;padding:13px 0;border-bottom:1px solid var(--line)}.row:last-child{border-bottom:0}
 .time{font-size:13px;font-weight:800;color:var(--gold);line-height:1.4}.name{font-weight:750;color:var(--navy);margin-bottom:3px}.note{font-size:13px;color:var(--muted);line-height:1.5}
-.mapWrap{padding:10px}.mapTitle{font-weight:800;color:var(--navy);padding:4px 6px 10px}.map{height:320px;border-radius:14px;overflow:hidden;background:#dbe6ee}
-.badges{display:flex;gap:8px;flex-wrap:wrap;padding:10px 4px 2px}.badge{font-size:12px;padding:6px 9px;border-radius:999px;background:#f4f6f8;color:#4a5568}
+.mapWrap{padding:10px}.mapTitle{font-weight:800;color:var(--navy);padding:4px 6px 10px}.sketch{width:100%;border-radius:14px;overflow:hidden;background:var(--paper);border:1px solid #eadfcb}
+.sketch svg{width:100%;height:auto;display:block}.mapActions{display:flex;justify-content:flex-end;padding:9px 4px 1px}
+.realmap{display:inline-flex;align-items:center;gap:6px;padding:8px 11px;border-radius:999px;background:#f2f6f9;color:#1b5f87;text-decoration:none;font-size:12px;font-weight:700}
 .nav{position:absolute;left:0;right:0;bottom:0;background:rgba(255,255,255,.94);backdrop-filter:blur(12px);border-top:1px solid var(--line);display:flex;align-items:center;gap:10px;padding:10px 14px 12px}
 .btn{width:42px;height:42px;border:0;border-radius:50%;background:var(--navy);color:white;font-size:21px}.btn:disabled{opacity:.2}.dots{flex:1;display:flex;justify-content:center;gap:6px}.dot{width:7px;height:7px;border-radius:50%;background:#cbd5e1}.dot.active{background:var(--gold);transform:scale(1.25)}
-.leaflet-control-attribution{font-size:9px}.pin{background:var(--navy);color:#fff;border:2px solid #fff;border-radius:50%;width:28px!important;height:28px!important;line-height:24px;text-align:center;font-weight:800;box-shadow:0 2px 8px rgba(0,0,0,.25)}
-a.book{display:inline-block;margin-top:6px;color:#0b62c6;text-decoration:none;font-weight:650}
-@media(min-width:850px){.page{padding:22px max(18px,calc((100vw - 920px)/2)) 100px}.map{height:400px}}
+@media(min-width:850px){.page{padding:22px max(18px,calc((100vw - 920px)/2)) 100px}}
 </style>
 </head>
 <body>
@@ -34,7 +31,6 @@ a.book{display:inline-block;margin-top:6px;color:#0b62c6;text-decoration:none;fo
     <div class="nav"><button class="btn" id="prev">‹</button><div class="dots" id="dots"></div><button class="btn" id="next">›</button></div>
   </div>
 </div>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 const days=[
 {d:"12/26",city:"上海 → 悉尼",title:"抵达悉尼",sub:"轻松傍晚 · 建筑 + 海港",items:[
@@ -42,32 +38,32 @@ const days=[
 ["16:00–17:15","酒店休息","Check-in，恢复体力"],
 ["17:30–18:30","维多利亚女王大厦 QVB","看穹顶、回廊与老钟；Boxing Day 营业时间临近再确认"],
 ["18:45–20:45","Darling Harbour","港边晚餐与夜景"]
-],pts:[["1","QVB",-33.8716,151.2069],["2","Darling Harbour",-33.8748,151.1989]]},
+],style:"harbour",pts:[["1","维多利亚女王大厦",-33.8716,151.2069],["2","达令港",-33.8748,151.1989]],real:"https://www.google.com/maps/dir/Queen+Victoria+Building,+Sydney/Darling+Harbour,+Sydney"},
 {d:"12/27",city:"悉尼",title:"文化日",sub:"大学建筑 · 美术馆 · 图书馆",items:[
 ["10:00–11:00","悉尼大学","Main Quadrangle / Great Hall"],
 ["11:30–12:30","午餐","市中心或美术馆附近"],
 ["12:45–15:30","新南威尔士美术馆","本次悉尼唯一一次完整看展"],
 ["15:45–16:25","新南威尔士州立图书馆","轻量参观建筑与阅览空间"]
-],pts:[["1","悉尼大学",-33.8886,151.1873],["2","新南威尔士美术馆",-33.8682,151.2170],["3","新南威尔士州立图书馆",-33.8673,151.2126]]},
+],style:"city",pts:[["1","悉尼大学",-33.8886,151.1873],["2","新南威尔士美术馆",-33.8682,151.2170],["3","新南威尔士州立图书馆",-33.8673,151.2126]],real:"https://www.google.com/maps/dir/The+University+of+Sydney/Art+Gallery+of+New+South+Wales/State+Library+of+New+South+Wales"},
 {d:"12/28",city:"悉尼",title:"经典悉尼",sub:"环形码头 · 歌剧院 · The Rocks",items:[
 ["10:30–11:00","Circular Quay","港湾打卡"],
 ["11:00–12:00","悉尼歌剧院","建筑外观与公共空间；若想保证进入 Concert Hall，可看 18:00 演出"],
 ["12:00–13:15","午餐","顺路吃 Sydney Rock Oyster"],
 ["13:30–15:00","The Rocks","老街与砂岩建筑"],
 ["18:00–20:00","晚间二选一","Aster / Cafe Sydney / Concert Hall"]
-],pts:[["1","Circular Quay",-33.8610,151.2126],["2","悉尼歌剧院",-33.8568,151.2153],["3","The Rocks",-33.8599,151.2090],["4A","Aster",-33.8650,151.2138],["4B","Cafe Sydney",-33.8619,151.2097]]},
+],style:"harbour",pts:[["1","环形码头",-33.8610,151.2126],["2","悉尼歌剧院",-33.8568,151.2153],["3","岩石区",-33.8599,151.2090],["4A","Aster",-33.8650,151.2138],["4B","Cafe Sydney",-33.8619,151.2097]],real:"https://www.google.com/maps/dir/Circular+Quay,+Sydney/Sydney+Opera+House/The+Rocks,+Sydney"},
 {d:"12/29",city:"悉尼",title:"F1 曼利轻松日",sub:"轮渡看港湾 · 黄昏回程",items:[
 ["上午","自由活动","睡晚一点 / QVB补逛 / Meat Pie"],
 ["17:30–18:05","F1 去 Manly","把轮渡本身当景点"],
 ["18:05–19:15","Manly Wharf","码头、Corso、海边坐坐"],
 ["19:20–19:55","F1 回 Circular Quay","尽量赶日落前后港景"]
-],pts:[["1","Circular Quay",-33.8610,151.2126],["2","Manly Wharf",-33.8007,151.2861]]},
+],style:"ferry",pts:[["1","环形码头",-33.8610,151.2126],["2","曼利码头",-33.8007,151.2861]],real:"https://www.google.com/maps/dir/Circular+Quay,+Sydney/Manly+Wharf,+Sydney"},
 {d:"12/30",city:"悉尼 → 墨尔本",title:"转场墨尔本",sub:"SYD → MEL · Southbank 傍晚",items:[
 ["13:00–14:35","QF445 悉尼 → 墨尔本","SYD T3 → MEL T1；明确不选 Avalon"],
 ["16:00–17:00","酒店休息","Check-in"],
 ["17:15–18:15","Southbank","沿雅拉河轻松走一小段"],
 ["18:15–20:00","Yarra River 晚餐","看河景，不再加第二轮景点"]
-],pts:[["1","Sydney Airport",-33.9340,151.1800],["2","Southbank",-37.8248,144.9647],["3","Yarra River",-37.8210,144.9660]]},
+],style:"split",pts:[["1","悉尼机场",-33.9340,151.1800],["2","Southbank",-37.8248,144.9647],["3","雅拉河",-37.8210,144.9660]],real:"https://www.google.com/maps/search/Southbank+Melbourne"},
 {d:"12/31",city:"墨尔本",title:"跨年日",sub:"大学 · 花园 · 市场 · 图书馆 · 烟花",items:[
 ["09:30–10:30","墨尔本大学","核心老校区"],
 ["10:45–11:30","Carlton Gardens","皇家展览馆与花园"],
@@ -75,49 +71,64 @@ const days=[
 ["13:30–14:20","State Library Victoria","La Trobe Reading Room"],
 ["15:00–18:30","酒店休息","午睡、洗澡、换衣服"],
 ["19:00–00:30","跨年晚餐 + 烟花","优先 Hophaus / BearBrass；Blossom 仅考虑有座位的 VIP"]
-],pts:[["1","墨尔本大学",-37.7963,144.9614],["2","Carlton Gardens",-37.8060,144.9716],["3","Queen Victoria Market",-37.8076,144.9568],["4","State Library Victoria",-37.8097,144.9653],["5A","Hophaus",-37.8214,144.9657],["5B","BearBrass",-37.8222,144.9664],["5C","Blossom Rooftop",-37.8150,144.9689]]},
+],style:"river",pts:[["1","墨尔本大学",-37.7963,144.9614],["2","卡尔顿花园",-37.8060,144.9716],["3","维多利亚女王市场",-37.8076,144.9568],["4","维州州立图书馆",-37.8097,144.9653],["5A","Hophaus",-37.8214,144.9657],["5B","BearBrass",-37.8222,144.9664],["5C","Blossom Rooftop",-37.8150,144.9689]],real:"https://www.google.com/maps/dir/University+of+Melbourne/Carlton+Gardens/Queen+Victoria+Market/State+Library+Victoria"},
 {d:"01/01",city:"墨尔本",title:"海边慢游",sub:"St Kilda · Brighton",items:[
 ["10:30–12:00","Brunch + 睡晚一点","跨年后不要早起"],
 ["13:15–14:45","St Kilda Pier","看海、码头、坐着休息"],
 ["14:45–15:15","Uber","前往 Brighton"],
 ["15:15–16:30","Brighton Bathing Boxes","彩色小屋 + 海边"]
-],pts:[["1","St Kilda Pier",-37.8677,144.9723],["2","Brighton Bathing Boxes",-37.9189,144.9868]]},
+],style:"coast",pts:[["1","圣基尔达码头",-37.8677,144.9723],["2","布莱顿彩色小屋",-37.9189,144.9868]],real:"https://www.google.com/maps/dir/St+Kilda+Pier/Brighton+Bathing+Boxes"},
 {d:"01/02",city:"墨尔本",title:"建筑艺术日",sub:"NGV · 国库花园 · 剧院 · 皇家拱廊",items:[
 ["10:00–12:30","维多利亚国家艺术馆 NGV","本次墨尔本唯一一次完整看展"],
 ["13:45–14:10","Treasury Gardens","看喷泉"],
 ["14:15–14:35","Princess Theatre","外观打卡"],
 ["14:50–15:40","Royal Arcade","看拱廊与整点钟"],
 ["15:40–16:20","Collins Street","可选，累了直接删"]
-],pts:[["1","NGV International",-37.8226,144.9689],["2","Treasury Gardens",-37.8138,144.9763],["3","Princess Theatre",-37.8103,144.9682],["4","Royal Arcade",-37.8143,144.9631],["5","Collins Street",-37.8165,144.9655]]},
+],style:"city",pts:[["1","维多利亚国家艺术馆",-37.8226,144.9689],["2","国库花园",-37.8138,144.9763],["3","公主剧院",-37.8103,144.9682],["4","皇家拱廊",-37.8143,144.9631],["5","柯林斯街",-37.8165,144.9655]],real:"https://www.google.com/maps/dir/National+Gallery+of+Victoria/Treasury+Gardens/Princess+Theatre+Melbourne/Royal+Arcade+Melbourne/Collins+Street+Melbourne"},
 {d:"01/03",city:"墨尔本 → 上海",title:"返程",sub:"不早起 · 中午航班",items:[
 ["07:30–08:15","早餐","轻松收尾"],
 ["08:30","酒店出发","Taxi / Uber 去 MEL T2"],
 ["09:05–11:15","机场","值机、安检、出境"],
 ["12:00–18:55","MU738 墨尔本 → 上海","MEL T2 → PVG T1"]
-],pts:[["1","Melbourne Airport",-37.6690,144.8410]]}
+],style:"airport",pts:[["1","墨尔本机场",-37.6690,144.8410]],real:"https://www.google.com/maps/search/Melbourne+Airport+T2"}
 ];
+
+function sketchSVG(day){
+ const W=720,H=410,pad=72, pts=day.pts;
+ if(day.style==="split"){
+   return '<svg viewBox="0 0 720 410" xmlns="http://www.w3.org/2000/svg"><rect width="720" height="410" fill="#f8f3e8"/><rect x="24" y="24" width="320" height="362" rx="24" fill="#fffaf0" stroke="#dfd3bf"/><rect x="376" y="24" width="320" height="362" rx="24" fill="#fffaf0" stroke="#dfd3bf"/><text x="54" y="66" font-size="18" font-weight="700" fill="#17324d">悉尼</text><text x="406" y="66" font-size="18" font-weight="700" fill="#17324d">墨尔本</text><path d="M155 192 C270 106 420 106 540 190" fill="none" stroke="#c94f45" stroke-width="4" stroke-dasharray="8 9"/><path d="M510 174 l30 16 -30 16" fill="#c94f45"/><circle cx="155" cy="192" r="18" fill="#17324d" stroke="#fff" stroke-width="4"/><text x="155" y="198" text-anchor="middle" font-size="14" font-weight="700" fill="#fff">1</text><text x="155" y="232" text-anchor="middle" font-size="14" fill="#17324d">悉尼机场</text><path d="M395 245 C455 205 520 212 590 250" fill="none" stroke="#c94f45" stroke-width="4" stroke-dasharray="7 8"/><circle cx="432" cy="246" r="18" fill="#17324d" stroke="#fff" stroke-width="4"/><text x="432" y="252" text-anchor="middle" font-size="14" font-weight="700" fill="#fff">2</text><text x="432" y="280" text-anchor="middle" font-size="13" fill="#17324d">Southbank</text><circle cx="575" cy="248" r="18" fill="#17324d" stroke="#fff" stroke-width="4"/><text x="575" y="254" text-anchor="middle" font-size="14" font-weight="700" fill="#fff">3</text><text x="575" y="282" text-anchor="middle" font-size="13" fill="#17324d">雅拉河</text><path d="M390 314 C455 292 530 334 676 310" fill="none" stroke="#9fd2df" stroke-width="20" stroke-linecap="round" opacity=".75"/></svg>';
+ }
+ let minLat=Math.min(...pts.map(p=>p[2])),maxLat=Math.max(...pts.map(p=>p[2])),minLon=Math.min(...pts.map(p=>p[3])),maxLon=Math.max(...pts.map(p=>p[3]));
+ if(maxLat-minLat<0.006){maxLat+=0.003;minLat-=0.003} if(maxLon-minLon<0.006){maxLon+=0.003;minLon-=0.003}
+ const xy=pts.map(p=>[p[0],p[1],pad+(p[3]-minLon)/(maxLon-minLon)*(W-2*pad),H-pad-(p[2]-minLat)/(maxLat-minLat)*(H-2*pad)]);
+ const route=xy.map((p,i)=>(i?'L':'M')+p[2].toFixed(1)+' '+p[3].toFixed(1)).join(' ');
+ let water='';
+ if(day.style==="harbour") water='<path d="M0 300 C140 250 210 360 345 318 C480 275 555 335 720 270 L720 410 L0 410Z" fill="#cfe8ef"/>';
+ if(day.style==="ferry") water='<rect y="180" width="720" height="230" fill="#cfe8ef"/><path d="M0 190 C140 150 300 230 430 180 C555 135 625 190 720 150" fill="none" stroke="#a8d6e0" stroke-width="8"/>';
+ if(day.style==="river") water='<path d="M0 315 C150 270 265 350 380 310 C505 267 585 328 720 288" fill="none" stroke="#b7dee6" stroke-width="26" stroke-linecap="round"/>';
+ if(day.style==="coast") water='<path d="M530 0 C480 110 555 180 500 275 C470 330 520 370 490 410 L720 410 L720 0Z" fill="#cfe8ef"/>';
+ if(day.style==="airport") water='<path d="M0 340 C170 300 300 370 470 330 C570 306 640 320 720 300 L720 410 L0 410Z" fill="#dcecf0"/>';
+ const streets='<g stroke="#dfd7c9" stroke-width="2" opacity=".65"><path d="M80 80 L650 290"/><path d="M110 320 L615 85"/><path d="M220 45 L300 370"/><path d="M465 45 L415 372"/></g>';
+ const dots=xy.map((p,i)=>{
+   const anchor=i%2===0?'start':'end', dx=i%2===0?23:-23;
+   return '<circle cx="'+p[2]+'" cy="'+p[3]+'" r="18" fill="#17324d" stroke="#fff" stroke-width="4"/><text x="'+p[2]+'" y="'+(p[3]+5)+'" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">'+p[0]+'</text><text x="'+(p[2]+dx)+'" y="'+(p[3]-23)+'" text-anchor="'+anchor+'" font-size="13" font-weight="600" fill="#17324d">'+p[1]+'</text>';
+ }).join('');
+ return '<svg viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg"><rect width="'+W+'" height="'+H+'" fill="#f8f3e8"/>'+water+streets+'<path d="'+route+'" fill="none" stroke="#c94f45" stroke-width="4" stroke-dasharray="8 8" stroke-linecap="round" stroke-linejoin="round"/>'+dots+'<text x="22" y="34" font-size="12" fill="#8a7e6b">当天路线示意 · 按编号顺序</text></svg>';
+}
+
 const track=document.getElementById("track"),dots=document.getElementById("dots"),count=document.getElementById("count");
 days.forEach((x,i)=>{
  const sec=document.createElement("section");sec.className="page";sec.innerHTML=
- `<div class="hero"><div class="date">${x.d} · ${x.city}</div><div class="title">${x.title}</div><div class="sub">${x.sub}</div></div>
- <div class="card">${x.items.map(r=>`<div class="row"><div class="time">${r[0]}</div><div><div class="name">${r[1]}</div><div class="note">${r[2]}</div></div></div>`).join("")}</div>
- <div class="card mapWrap"><div class="mapTitle">当天地点地图</div><div class="map" id="map${i}"></div><div class="badges">${x.pts.map(p=>`<span class="badge">${p[0]} · ${p[1]}</span>`).join("")}</div></div>`;
+ '<div class="hero"><div class="date">'+x.d+' · '+x.city+'</div><div class="title">'+x.title+'</div><div class="sub">'+x.sub+'</div></div>'+
+ '<div class="card">'+x.items.map(r=>'<div class="row"><div class="time">'+r[0]+'</div><div><div class="name">'+r[1]+'</div><div class="note">'+r[2]+'</div></div></div>').join("")+'</div>'+
+ '<div class="card mapWrap"><div class="mapTitle">当天手绘地图</div><div class="sketch">'+sketchSVG(x)+'</div><div class="mapActions"><a class="realmap" href="'+x.real+'" target="_blank" rel="noopener">↗ 查看真实地图</a></div></div>';
  track.appendChild(sec);let d=document.createElement("span");d.className="dot";d.onclick=()=>{idx=i;render()};dots.appendChild(d);
 });
-let idx=0,startX=0,dx=0,maps=[];
-function initMap(i){
- if(maps[i]) return;
- const x=days[i],m=L.map("map"+i,{zoomControl:true,attributionControl:true});
- L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:"© OpenStreetMap"}).addTo(m);
- const b=[];
- x.pts.forEach(p=>{const icon=L.divIcon({className:"pin",html:p[0],iconSize:[28,28],iconAnchor:[14,14]});L.marker([p[2],p[3]],{icon}).addTo(m).bindPopup(p[1]);b.push([p[2],p[3]])});
- if(b.length===1)m.setView(b[0],12);else m.fitBounds(b,{padding:[28,28]});
- maps[i]=m;setTimeout(()=>m.invalidateSize(),120);
-}
+let idx=0,startX=0,dx=0;
 function render(){
- track.style.transform=`translateX(-${idx*100}%)`;count.textContent=`${idx+1} / ${days.length}`;
+ track.style.transform='translateX(-'+(idx*100)+'%)';count.textContent=(idx+1)+' / '+days.length;
  document.getElementById("prev").disabled=idx===0;document.getElementById("next").disabled=idx===days.length-1;
- [...dots.children].forEach((d,i)=>d.classList.toggle("active",i===idx));initMap(idx);
+ [...dots.children].forEach((d,i)=>d.classList.toggle("active",i===idx));
 }
 document.getElementById("prev").onclick=()=>{if(idx>0){idx--;render()}};
 document.getElementById("next").onclick=()=>{if(idx<days.length-1){idx++;render()}};
